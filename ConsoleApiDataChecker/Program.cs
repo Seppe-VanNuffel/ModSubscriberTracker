@@ -13,19 +13,41 @@ class Program
         
         string[] workshopIds = ["3802185577", "3721437118"];
 
-        SteamManager steamManager = new SteamManager(workshopIds, fileManager);
-
-        //steamManager.RestoreSessionData();
+        SteamManager steamManager = new SteamManager(fileManager);
         
-        while (true)
+        // Set up api timer
+        using var cancellationTokenSource = new CancellationTokenSource();
+
+        Console.CancelKeyPress += (_, e) =>
         {
-            Console.Clear();
+            e.Cancel = true;
+            cancellationTokenSource.Cancel();
+        };
 
-            await steamManager.UpdateWorkshopItemData();
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
-            WriteDataToScreen(steamManager.GetWorkshopItems());
-            
-            Thread.Sleep(60000);
+        try
+        {
+            do
+            {
+                Console.Clear();
+
+                try
+                {
+                    await steamManager.UpdateWorkshopItemData();
+
+                    WriteDataToScreen(steamManager.GetWorkshopItems());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+            } while (await timer.WaitForNextTickAsync(cancellationTokenSource.Token));
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("Shutting down...");
         }
     }
 

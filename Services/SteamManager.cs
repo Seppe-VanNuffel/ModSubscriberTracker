@@ -9,7 +9,7 @@ public class SteamManager
     private List<WorkshopMod> _workshopItems;
     private IMods _modsFileManager;
     
-    public SteamManager(string[] workshopIds, IMods modsFileManager)
+    public SteamManager(IMods modsFileManager)
     {
         _workshopItems = [];
         _modsFileManager = modsFileManager;
@@ -26,11 +26,6 @@ public class SteamManager
             
             return;
         }
-        
-        foreach (var workshopId in workshopIds)
-        {
-            _workshopItems.Add(WorkshopModFactories.CreateNewWorkshopMod(workshopId));
-        }
     }
     
     public IEnumerable<WorkshopMod> GetWorkshopItems()
@@ -38,8 +33,18 @@ public class SteamManager
         return _workshopItems;
     }
 
+    public void AddWorkshopItem(string workshopItemId)
+    {
+        _workshopItems.Add(new(workshopItemId));
+    }
+    
     public async Task UpdateWorkshopItemData()
     {
+        if (_workshopItems.Count == 0)
+        {
+            return;
+        }
+        
         string jsonData = await SteamWorkshopService.GetModData(_workshopItems.Select(x => x.Id).ToList());
 
         SteamWorkshopResponseDTO responseDtoData = JsonTranslator.TranslateSteamJson(jsonData);
