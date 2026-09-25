@@ -1,4 +1,5 @@
 ﻿using Services.Factories;
+using Services.Interfaces;
 using Services.Models;
 
 namespace Services;
@@ -6,10 +7,26 @@ namespace Services;
 public class SteamManager
 {
     private List<WorkshopMod> _workshopItems;
+    private IMods _modsFileManager;
     
-    public SteamManager(string[] workshopIds)
+    public SteamManager(string[] workshopIds, IMods modsFileManager)
     {
         _workshopItems = [];
+        _modsFileManager = modsFileManager;
+
+        var fileContent = modsFileManager.GetFromFile();
+
+        
+        if (fileContent.Any())
+        {
+            foreach (var workshopMod in fileContent)
+            {
+                _workshopItems.Add(WorkshopModFactories.CreateWorkshopModFrom(workshopMod));
+            }
+            
+            return;
+        }
+        
         foreach (var workshopId in workshopIds)
         {
             _workshopItems.Add(WorkshopModFactories.CreateNewWorkshopMod(workshopId));
@@ -41,5 +58,9 @@ public class SteamManager
             workshopItem.Subscribers = dtoItem.Subscriptions;
             workshopItem.LastUpdated = DateTime.Now;
         }
+        
+        _modsFileManager.SaveToFile(
+            _workshopItems.Select(WorkshopModFactories.CreateWorkshopModDtoFrom)
+        );
     }
 }

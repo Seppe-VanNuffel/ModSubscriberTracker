@@ -18,4 +18,14 @@ public class WorkshopMod
         PreviousSubscribers = 0;
         LastUpdated = DateTime.Now;
     }
+
+    public WorkshopMod(string id, string title, string imageUrl, int subscribers, int previousSubscribers, DateTime lastUpdated)
+    {
+        Id = id;
+        Title = title;
+        ImageUrl = imageUrl;
+        Subscribers = subscribers;
+        PreviousSubscribers = previousSubscribers;
+        LastUpdated = lastUpdated;
+    }
 }
