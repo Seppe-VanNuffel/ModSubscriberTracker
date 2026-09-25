@@ -1,5 +1,4 @@
 ﻿using Services;
-using Newtonsoft.Json;
 using Services.Models;
 
 namespace ConsoleApiDataChecker;
@@ -9,15 +8,28 @@ class Program
     static async Task Main(string[] args)
     {
         string[] workshopIds = ["3802185577", "3721437118"];
-        
-        string jsonData = await SteamWorkshopService.GetModData(workshopIds);
-        
-        SteamWorkshopResponse responseData = JsonConvert.DeserializeObject<Services.Models.SteamWorkshopResponse>(jsonData) ??
-                                    throw new NullReferenceException();
 
-        foreach (WorkshopItem workshopItem in responseData.Response.PublishedFileDetails)
+        SteamManager steamManager = new SteamManager(workshopIds);
+
+        //steamManager.RestoreSessionData();
+        
+        while (true)
         {
-            Console.WriteLine($"{workshopItem.Title} with {workshopItem.Subscriptions} subscriptions");
+            Console.Clear();
+
+            await steamManager.UpdateWorkshopItemData();
+
+            WriteDataToScreen(steamManager.GetWorkshopItems());
+            
+            Thread.Sleep(60000);
+        }
+    }
+
+    private static void WriteDataToScreen(IEnumerable<WorkshopMod> workshopItems)
+    {
+        foreach (var workshopItem in workshopItems)
+        {
+            Console.WriteLine($"{workshopItem.Title} with {workshopItem.Subscribers} subscriptions");
         }
     }
 }

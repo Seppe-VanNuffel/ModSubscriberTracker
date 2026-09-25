@@ -1,27 +1,21 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace Services.Models;
 
-namespace Services.Models;
-
-public class SteamWorkshopResponse
+public class WorkshopMod
 {
-    [JsonPropertyName("response")]
-    public SteamResponse Response { get; set; }
-}
-
-public class SteamResponse
-{
-    [JsonPropertyName("publishedfiledetails")]
-    public List<WorkshopItem> PublishedFileDetails { get; set; }
-}
-
-public class WorkshopItem
-{
-    [JsonPropertyName("title")]
+    public string Id { get; set; }
     public string Title { get; set; }
+    public string ImageUrl { get; set; }
+    public int Subscribers { get; set; }
+    public int PreviousSubscribers { get; set; }
+    public DateTime LastUpdated { get; set; }
 
-    [JsonPropertyName("preview_url")]
-    public string PreviewUrl { get; set; }
-
-    [JsonPropertyName("subscriptions")]
-    public int Subscriptions { get; set; }
+    public WorkshopMod(string id)
+    {
+        Id = id;
+        Title = string.Empty;
+        ImageUrl = string.Empty;
+        Subscribers  = 0;
+        PreviousSubscribers = 0;
+        LastUpdated = DateTime.Now;
+    }
 }
