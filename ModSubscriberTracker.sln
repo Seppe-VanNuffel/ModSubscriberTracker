@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{2E2E76AD-B403-431B-9171-26A0826E40B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "GUI\GUI.csproj", "{D13C7750-C2C2-4F67-AA3A-51A171AB58A1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2E2E76AD-B403-431B-9171-26A0826E40B5} = {2E2E76AD-B403-431B-9171-26A0826E40B5}
+		{F0160313-94EB-4F2A-8052-E8FFD7D93977} = {F0160313-94EB-4F2A-8052-E8FFD7D93977}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

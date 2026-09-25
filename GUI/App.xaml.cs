@@ -21,7 +21,7 @@ public partial class App : Application
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = "Steam Workshop Monitor",
-            Icon = new Icon("./Resources/icon.ico")
+            Icon = new Icon(".\\Resources\\icon.ico")
         };
         
         _trayIcon.ForceCreate(false);
