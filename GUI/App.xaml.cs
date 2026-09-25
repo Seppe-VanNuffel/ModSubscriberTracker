@@ -64,6 +64,8 @@ public partial class App : Application
         _mainWindow = new MainWindow(_steamManager);
 
         await UpdateTray();
+        
+        _mainWindow.Show();
     }
 
     private void OpenDashboard_Click(object sender, RoutedEventArgs e)
