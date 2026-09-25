@@ -11,8 +11,6 @@ class Program
     {
         IMods fileManager = new ModsFileManager(@"C:\test\Mods.json");
         
-        string[] workshopIds = ["3802185577", "3721437118"];
-
         SteamManager steamManager = new SteamManager(fileManager);
         
         // Set up api timer
@@ -53,6 +51,12 @@ class Program
 
     private static void WriteDataToScreen(IEnumerable<WorkshopMod> workshopItems)
     {
+        if (workshopItems == null || workshopItems.Count() == 0)
+        {
+            Console.WriteLine("No workshop items found.");
+            return;
+        }
+        
         foreach (var workshopItem in workshopItems)
         {
             Console.WriteLine($"{workshopItem.Title} with {workshopItem.Subscribers} subscriptions");
