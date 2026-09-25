@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
-using System.IO;
 using System.Windows;
 using H.NotifyIcon;
 using System.Windows.Controls;
 using Data;
 using Services;
+using Services.Models;
 
 namespace GUI;
 
@@ -14,20 +14,20 @@ namespace GUI;
 public partial class App : Application
 {
     private MainWindow? _mainWindow;
-    private TaskbarIcon? _trayIcon;
+    private TaskbarIcon? _trayMenu;
     private SteamManager _steamManager;
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         
-        _trayIcon = new TaskbarIcon
+        _trayMenu = new TaskbarIcon
         {
             ToolTipText = "Steam Workshop Monitor",
             Icon = new Icon(".\\Resources\\icon.ico")
         };
         
-        _trayIcon.ForceCreate(false);
+        _trayMenu.ForceCreate(false);
 
         var contextMenu = new ContextMenu();
 
@@ -57,11 +57,13 @@ public partial class App : Application
         contextMenu.Items.Add(new Separator());
         contextMenu.Items.Add(exitItem);
 
-        _trayIcon.ContextMenu = contextMenu;
+        _trayMenu.ContextMenu = contextMenu;
 
         _steamManager = new SteamManager(new ModsFileManager(".\\Files\\Mods.json"));
 
         _mainWindow = new MainWindow(_steamManager);
+
+        await UpdateTray();
     }
 
     private void OpenDashboard_Click(object sender, RoutedEventArgs e)
@@ -76,7 +78,13 @@ public partial class App : Application
 
     private async void RefreshNow_Click(object sender, RoutedEventArgs e)
     {
+        await UpdateTray();
+    }
+
+    private async Task UpdateTray()
+    {
         await _steamManager.UpdateWorkshopItemData();
+        UpdateTrayMenu(_steamManager.GetWorkshopItems());
     }
 
     private void Exit_Click(object sender, RoutedEventArgs e)
@@ -86,10 +94,59 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        _trayIcon?.Dispose();
+        _trayMenu?.Dispose();
 
         base.OnExit(e);
     }
     
-    
+    private void UpdateTrayMenu(IEnumerable<WorkshopMod> workshopItems)
+    {
+        if (_trayMenu == null)
+            return;
+
+        var contextMenu = new ContextMenu();
+        
+        foreach (var workshopItem in workshopItems)
+        {
+            var modItem = new MenuItem
+            {
+                Header = $"{workshopItem.Title}    {workshopItem.Subscribers}    {workshopItem.ComparisonText()}"
+            };
+
+            contextMenu.Items.Add(modItem);
+        }
+
+        contextMenu.Items.Add(new Separator());
+
+        var openItem = new MenuItem
+        {
+            Header = "Open Dashboard"
+        };
+
+        openItem.Click += OpenDashboard_Click;
+
+        contextMenu.Items.Add(openItem);
+
+        var refreshItem = new MenuItem
+        {
+            Header = "Refresh Now"
+        };
+
+        refreshItem.Click += RefreshNow_Click;
+
+        contextMenu.Items.Add(refreshItem);
+
+        contextMenu.Items.Add(new Separator());
+
+        var exitItem = new MenuItem
+        {
+            Header = "Exit"
+        };
+
+        exitItem.Click += Exit_Click;
+
+        contextMenu.Items.Add(exitItem);
+
+        _trayMenu.ContextMenu = contextMenu;
+    }
 }
