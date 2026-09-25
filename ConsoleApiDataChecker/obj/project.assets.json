@@ -14,6 +14,19 @@
             "related": ".xml"
           }
         }
+      },
+      "Services/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "Newtonsoft.Json": "14.0.1-beta2"
+        },
+        "compile": {
+          "bin/placeholder/Services.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Services.dll": {}
+        }
       }
     }
   },
@@ -47,11 +60,17 @@
         "newtonsoft.json.nuspec",
         "packageIcon.png"
       ]
+    },
+    "Services/1.0.0": {
+      "type": "project",
+      "path": "../Services/Services.csproj",
+      "msbuildProject": "../Services/Services.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
-      "Newtonsoft.Json >= 14.0.1-beta2"
+      "Newtonsoft.Json >= 14.0.1-beta2",
+      "Services >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -61,11 +80,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\Services\\Services.csproj",
-      "projectName": "Services",
-      "projectPath": "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\Services\\Services.csproj",
+      "projectUniqueName": "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\ConsoleApiDataChecker\\ConsoleApiDataChecker.csproj",
+      "projectName": "ConsoleApiDataChecker",
+      "projectPath": "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\ConsoleApiDataChecker\\ConsoleApiDataChecker.csproj",
       "packagesPath": "C:\\Users\\seppe\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\Services\\obj\\",
+      "outputPath": "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\ConsoleApiDataChecker\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -86,7 +105,11 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\Services\\Services.csproj": {
+              "projectPath": "C:\\Users\\seppe\\RiderProjects\\ModSubscriberTracker\\Services\\Services.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
