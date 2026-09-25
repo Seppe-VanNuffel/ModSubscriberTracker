@@ -11,12 +11,9 @@
     <ItemGroup>
       <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />
     </ItemGroup>
-
+    
     <ItemGroup>
-      <None Remove="Resources\icon.ico" />
-      <Resource Include="Resources\icon.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Resource>
+      <ProjectReference Include="..\Data\Data.csproj" />
+      <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
-
 </Project>

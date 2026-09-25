@@ -7,6 +7,9 @@ public static class FileReader
 {
     public static string ReadFromFile(string path)
     {
+        if(!File.Exists(path))
+            return string.Empty;
+        
         string fileContent = string.Empty;
         
         try

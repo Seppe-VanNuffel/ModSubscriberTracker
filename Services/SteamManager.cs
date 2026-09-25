@@ -13,18 +13,24 @@ public class SteamManager
     {
         _workshopItems = [];
         _modsFileManager = modsFileManager;
-
-        var fileContent = modsFileManager.GetFromFile();
-
         
-        if (fileContent.Any())
+        try
         {
-            foreach (var workshopMod in fileContent)
-            {
-                _workshopItems.Add(WorkshopModFactories.CreateWorkshopModFrom(workshopMod));
-            }
+            var fileContent = modsFileManager.GetFromFile();
             
-            return;
+            if (fileContent.Any())
+            {
+                foreach (var workshopMod in fileContent)
+                {
+                    _workshopItems.Add(WorkshopModFactories.CreateWorkshopModFrom(workshopMod));
+                }
+            
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
     
@@ -59,7 +65,11 @@ public class SteamManager
 
             workshopItem.Title = dtoItem.Title;
             workshopItem.ImageUrl = dtoItem.PreviewUrl;
-            workshopItem.PreviousSubscribers  = workshopItem.Subscribers;
+            
+            // Only update the previousSubscribers if there is a difference in subscribers
+            if(workshopItem.Subscribers != dtoItem.Subscriptions)
+                workshopItem.PreviousSubscribers  = workshopItem.Subscribers;
+            
             workshopItem.Subscribers = dtoItem.Subscriptions;
             workshopItem.LastUpdated = DateTime.Now;
         }

@@ -28,4 +28,14 @@ public class WorkshopMod
         PreviousSubscribers = previousSubscribers;
         LastUpdated = lastUpdated;
     }
+
+    public string ComparisonText()
+    {
+        if(Subscribers > PreviousSubscribers)
+            return $"▲ +{Subscribers-PreviousSubscribers}";
+        else if (Subscribers == PreviousSubscribers)
+            return "-";
+        else
+            return $"▼ -{PreviousSubscribers-Subscribers}";
+    }
 }

@@ -29,7 +29,6 @@ class Program
             do
             {
                 Console.Clear();
-
                 try
                 {
                     await steamManager.UpdateWorkshopItemData();

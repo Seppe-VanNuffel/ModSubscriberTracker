@@ -1,8 +1,10 @@
 ﻿using System.Drawing;
+using System.IO;
 using System.Windows;
 using H.NotifyIcon;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+using Data;
+using Services;
 
 namespace GUI;
 
@@ -13,6 +15,7 @@ public partial class App : Application
 {
     private MainWindow? _mainWindow;
     private TaskbarIcon? _trayIcon;
+    private SteamManager _steamManager;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -56,7 +59,9 @@ public partial class App : Application
 
         _trayIcon.ContextMenu = contextMenu;
 
-        _mainWindow = new MainWindow();
+        _steamManager = new SteamManager(new ModsFileManager(".\\Files\\Mods.json"));
+
+        _mainWindow = new MainWindow(_steamManager);
     }
 
     private void OpenDashboard_Click(object sender, RoutedEventArgs e)
@@ -69,9 +74,9 @@ public partial class App : Application
         _mainWindow.Activate();
     }
 
-    private void RefreshNow_Click(object sender, RoutedEventArgs e)
+    private async void RefreshNow_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("Refresh clicked!");
+        await _steamManager.UpdateWorkshopItemData();
     }
 
     private void Exit_Click(object sender, RoutedEventArgs e)
@@ -85,4 +90,6 @@ public partial class App : Application
 
         base.OnExit(e);
     }
+    
+    
 }
