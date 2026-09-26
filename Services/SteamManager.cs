@@ -78,4 +78,9 @@ public class SteamManager
             _workshopItems.Select(WorkshopModFactories.CreateWorkshopModDtoFrom)
         );
     }
+
+    public void RemoveWorkshopItem(WorkshopMod mod)
+    {
+        _workshopItems.RemoveAll(x => x.Id == mod.Id);
+    }
 }

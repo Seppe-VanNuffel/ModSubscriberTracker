@@ -62,6 +62,19 @@ public partial class MainWindow : Window
         await _refreshService.RefreshAsync();
     }
     
+    private void DeleteMod_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+
+        if (button.Tag is not WorkshopMod mod)
+            return;
+
+        _steamManager.RemoveWorkshopItem(mod);
+
+        RefreshMods();
+    }
+    
     private void AddModToDisplay(WorkshopMod mod)
     {
         var row = new Grid
@@ -77,6 +90,9 @@ public partial class MainWindow : Window
 
         row.ColumnDefinitions.Add(
             new ColumnDefinition { Width = new GridLength(100) });
+        
+        row.ColumnDefinitions.Add(
+            new ColumnDefinition { Width = new GridLength(40) });
 
         var title = new TextBlock
         {
@@ -104,12 +120,26 @@ public partial class MainWindow : Window
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Right
         };
-
+        
         Grid.SetColumn(change, 2);
+        
+        var deleteButton = new Button
+        {
+            Content = "🗑",
+            Width = 30,
+            Height = 30,
+            Padding = new Thickness(0),
+            Tag = mod
+        };
+
+        deleteButton.Click += DeleteMod_Click;
+
+        Grid.SetColumn(deleteButton, 3);
 
         row.Children.Add(title);
         row.Children.Add(subscriptions);
         row.Children.Add(change);
+        row.Children.Add(deleteButton);
 
         StackPanel.Children.Add(row);
     }
