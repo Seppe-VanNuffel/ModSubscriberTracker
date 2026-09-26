@@ -14,13 +14,40 @@ namespace GUI;
 public partial class App : Application
 {
     private MainWindow? _mainWindow;
+    
     private TaskbarIcon? _trayMenu;
+    
     private SteamManager _steamManager;
+    private SteamRefreshService _refreshService;
+    
+    private CancellationTokenSource _refreshCancellationTokenSource;
+    private Task _refreshTask;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         
+        _steamManager = new SteamManager(new ModsFileManager(".\\Files\\Mods.json"));
+
+        CreateTrayIcon();
+
+        _refreshService = new(_steamManager, TimeSpan.FromMinutes(1));
+
+        _refreshService.DataUpdated += RefreshService_DataUpdated;
+        
+        _refreshCancellationTokenSource = new();
+        
+        _refreshTask = _refreshService.RunAsync(_refreshCancellationTokenSource.Token);
+
+        UpdateTray();
+        
+        _mainWindow = new MainWindow(_steamManager, _refreshService);
+        
+        _mainWindow.Show();
+    }
+
+    private void CreateTrayIcon()
+    {
         _trayMenu = new TaskbarIcon
         {
             ToolTipText = "Steam Workshop Monitor",
@@ -58,14 +85,6 @@ public partial class App : Application
         contextMenu.Items.Add(exitItem);
 
         _trayMenu.ContextMenu = contextMenu;
-
-        _steamManager = new SteamManager(new ModsFileManager(".\\Files\\Mods.json"));
-
-        _mainWindow = new MainWindow(_steamManager);
-
-        await UpdateTray();
-        
-        _mainWindow.Show();
     }
 
     private void OpenDashboard_Click(object sender, RoutedEventArgs e)
@@ -80,12 +99,11 @@ public partial class App : Application
 
     private async void RefreshNow_Click(object sender, RoutedEventArgs e)
     {
-        await UpdateTray();
+        await _refreshService.RefreshAsync();
     }
 
-    private async Task UpdateTray()
+    private void UpdateTray()
     {
-        await _steamManager.UpdateWorkshopItemData();
         UpdateTrayMenu(_steamManager.GetWorkshopItems());
     }
 
@@ -99,6 +117,15 @@ public partial class App : Application
         _trayMenu?.Dispose();
 
         base.OnExit(e);
+    }
+    
+    private void RefreshService_DataUpdated(object? sender, EventArgs e)
+    {
+        Dispatcher.Invoke(() =>
+        {
+            UpdateTray();
+            _mainWindow.RefreshMods();
+        });
     }
     
     private void UpdateTrayMenu(IEnumerable<WorkshopMod> workshopItems)

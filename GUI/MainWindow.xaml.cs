@@ -12,17 +12,21 @@ namespace GUI;
 public partial class MainWindow : Window
 {
     private SteamManager _steamManager;
+    private SteamRefreshService  _refreshService;
     
-    public MainWindow(SteamManager steamManager)
+    public MainWindow(SteamManager steamManager, SteamRefreshService refreshService)
     {
         InitializeComponent();
         _steamManager = steamManager;
+        _refreshService = refreshService;
 
         RefreshMods();
     }
 
-    private void RefreshMods()
+    public void RefreshMods()
     {
+        ClearModsDisplay();
+        
         foreach (var workshopMod in _steamManager.GetWorkshopItems())
         {
             AddModToDisplay(workshopMod);
@@ -48,18 +52,14 @@ public partial class MainWindow : Window
         
         WorkshopIdTextBox.Text = string.Empty;
         
-        await _steamManager.UpdateWorkshopItemData();
+        await _refreshService.RefreshAsync();
         
         RefreshMods();
     }
 
     private async void RefreshNow_Click(object sender, RoutedEventArgs e)
     {
-        ClearModsDisplay();
-        
-        await _steamManager.UpdateWorkshopItemData();
-        
-        RefreshMods();
+        await _refreshService.RefreshAsync();
     }
     
     private void AddModToDisplay(WorkshopMod mod)
